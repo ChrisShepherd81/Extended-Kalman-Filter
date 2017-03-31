@@ -23,14 +23,19 @@ void check_arguments(int argc, char* argv[]);
 void check_files(ifstream& in_file, string& in_name, ofstream& out_file, string& out_name);
 void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_list, vector<GroundTruthPackage> &gt_pack_list);
 
-int main(int argc, char* argv[]) {
-
+int main(int argc, char* argv[])
+{
+#if LLDB_MI
+  string in_file_name_ = "./data/sample-laser-radar-measurement-data-1.txt";
+  string out_file_name_ = "./data/output.txt";
+#else
   check_arguments(argc, argv);
-
   string in_file_name_ = argv[1];
-  ifstream in_file_(in_file_name_.c_str(), ifstream::in);
-
   string out_file_name_ = argv[2];
+#endif
+
+  //open file streams
+  ifstream in_file_(in_file_name_.c_str(), ifstream::in);
   ofstream out_file_(out_file_name_.c_str(), ofstream::out);
 
   check_files(in_file_, in_file_name_, out_file_, out_file_name_);
@@ -59,6 +64,7 @@ int main(int argc, char* argv[]) {
     out_file_ << fusionEKF.ekf_.x_(1) << "\t";
     out_file_ << fusionEKF.ekf_.x_(2) << "\t";
     out_file_ << fusionEKF.ekf_.x_(3) << "\t";
+    std::cout << "Write to output\n";
 
     // output the measurements
     if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER) {

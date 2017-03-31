@@ -25,12 +25,19 @@ public:
   /**
   * A helper method to calculate RMSE.
   */
-  Eigen::VectorXd CalculateRMSE(const std::vector<Eigen::VectorXd> &estimations, const std::vector<Eigen::VectorXd> &ground_truth);
+  VectorXd CalculateRMSE(const std::vector<Eigen::VectorXd> &estimations,
+		  	  	  	  	  	    const std::vector<Eigen::VectorXd> &ground_truth);
 
   /**
   * A helper method to calculate Jacobians.
   */
-  Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
+  MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
+
+  /**
+  * A helper method to calculate process noise covariance matrix.
+  */
+  MatrixXd CalculateProcessCovarianceMatrix(double dt,double noise_ax = 9.0,
+  											double noise_ay=9.0 );
 
 };
 

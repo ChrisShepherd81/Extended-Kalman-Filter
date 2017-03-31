@@ -30,6 +30,19 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	return rmse;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
+MatrixXd Tools::CalculateProcessCovarianceMatrix(double dt,double noise_ax, double noise_ay )
+{
+	MatrixXd Q(4,4);
+	double dt_2 = std::pow(dt,2);
+	double dt_3 = dt_2*dt;
+	double dt_4 = dt_3*dt;
+	Q	<< (0.25*dt_4*noise_ax), 0, (0.5*dt_3*noise_ax), 0,
+			0, (0.25*dt_4*noise_ay), 0, (0.5*dt_3*noise_ay),
+			(0.5*dt_3*noise_ax), 0, (dt_2*noise_ax), 0,
+			0, (0.5*dt_3*noise_ay), 0, (dt_2*noise_ay);
+	return Q;
+}
+///////////////////////////////////////////////////////////////////////////////////////
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 {
 	MatrixXd Hj(3,4);
