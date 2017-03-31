@@ -13,7 +13,7 @@
 class Data
 {
 public:
-	enum SensorType {LASER,RADAR } sensor_type_;
+	enum SensorType {LASER,RADAR } sensor_type;
 	Eigen::VectorXd values;
 };
 ///////////////////////////////////////////////////////////////////////////////////////

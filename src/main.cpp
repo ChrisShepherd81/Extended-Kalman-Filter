@@ -61,11 +61,11 @@ int main(int argc, char* argv[]) {
     out_file_ << fusionEKF.ekf_.x_(3) << "\t";
 
     // output the measurements
-    if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::LASER) {
+    if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER) {
       // output the estimation
       out_file_ << measurement_pack_list[k].values(0) << "\t";
       out_file_ << measurement_pack_list[k].values(1) << "\t";
-    } else if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR) {
+    } else if (measurement_pack_list[k].sensor_type == MeasurementPackage::RADAR) {
       // output the estimation in the cartesian coordinates
       float ro = measurement_pack_list[k].values(0);
       float phi = measurement_pack_list[k].values(1);
@@ -155,7 +155,7 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 			// LASER MEASUREMENT
 
 			// read measurements at this timestamp
-			meas_package.sensor_type_ = MeasurementPackage::LASER;
+			meas_package.sensor_type = MeasurementPackage::LASER;
 			meas_package.values = VectorXd(2);
 			float x;
 			float y;
@@ -171,7 +171,7 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 			// RADAR MEASUREMENT
 
 			// read measurements at this timestamp
-			meas_package.sensor_type_ = MeasurementPackage::RADAR;
+			meas_package.sensor_type = MeasurementPackage::RADAR;
 			meas_package.values = VectorXd(3);
 			float ro;
 			float phi;

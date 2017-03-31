@@ -56,12 +56,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
-    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
+    if (measurement_pack.sensor_type == MeasurementPackage::RADAR) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
     }
-    else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
+    else if (measurement_pack.sensor_type == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
@@ -96,7 +96,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
      * Update the state and covariance matrices.
    */
 
-  if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
+  if (measurement_pack.sensor_type == MeasurementPackage::RADAR) {
     // Radar updates
   } else {
     // Laser updates
