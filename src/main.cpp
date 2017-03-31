@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include "Eigen/Dense"
 #include "FusionEKF.h"
-#include "ground_truth_package.h"
-#include "measurement_package.h"
+#include "Data.hpp"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -36,9 +35,9 @@ int main(int argc, char* argv[]) {
 
   check_files(in_file_, in_file_name_, out_file_, out_file_name_);
 
+  //Read in the measurements and ground truth from file
   vector<MeasurementPackage> measurement_pack_list;
   vector<GroundTruthPackage> gt_pack_list;
-
   read_file(in_file_, measurement_pack_list, gt_pack_list);
 
   // Create a Fusion EKF instance
@@ -64,24 +63,24 @@ int main(int argc, char* argv[]) {
     // output the measurements
     if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::LASER) {
       // output the estimation
-      out_file_ << measurement_pack_list[k].raw_measurements_(0) << "\t";
-      out_file_ << measurement_pack_list[k].raw_measurements_(1) << "\t";
+      out_file_ << measurement_pack_list[k].values(0) << "\t";
+      out_file_ << measurement_pack_list[k].values(1) << "\t";
     } else if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR) {
       // output the estimation in the cartesian coordinates
-      float ro = measurement_pack_list[k].raw_measurements_(0);
-      float phi = measurement_pack_list[k].raw_measurements_(1);
+      float ro = measurement_pack_list[k].values(0);
+      float phi = measurement_pack_list[k].values(1);
       out_file_ << ro * cos(phi) << "\t"; // p1_meas
       out_file_ << ro * sin(phi) << "\t"; // ps_meas
     }
 
     // output the ground truth packages
-    out_file_ << gt_pack_list[k].gt_values_(0) << "\t";
-    out_file_ << gt_pack_list[k].gt_values_(1) << "\t";
-    out_file_ << gt_pack_list[k].gt_values_(2) << "\t";
-    out_file_ << gt_pack_list[k].gt_values_(3) << "\n";
+    out_file_ << gt_pack_list[k].values(0) << "\t";
+    out_file_ << gt_pack_list[k].values(1) << "\t";
+    out_file_ << gt_pack_list[k].values(2) << "\t";
+    out_file_ << gt_pack_list[k].values(3) << "\n";
 
     estimations.push_back(fusionEKF.ekf_.x_);
-    ground_truth.push_back(gt_pack_list[k].gt_values_);
+    ground_truth.push_back(gt_pack_list[k].values);
   }
 
   // compute the accuracy (RMSE)
@@ -157,12 +156,12 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 
 			// read measurements at this timestamp
 			meas_package.sensor_type_ = MeasurementPackage::LASER;
-			meas_package.raw_measurements_ = VectorXd(2);
+			meas_package.values = VectorXd(2);
 			float x;
 			float y;
 			iss >> x;
 			iss >> y;
-			meas_package.raw_measurements_ << x, y;
+			meas_package.values << x, y;
 			iss >> timestamp;
 			meas_package.timestamp_ = timestamp;
 			measurement_pack_list.push_back(meas_package);
@@ -173,14 +172,14 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 
 			// read measurements at this timestamp
 			meas_package.sensor_type_ = MeasurementPackage::RADAR;
-			meas_package.raw_measurements_ = VectorXd(3);
+			meas_package.values = VectorXd(3);
 			float ro;
 			float phi;
 			float ro_dot;
 			iss >> ro;
 			iss >> phi;
 			iss >> ro_dot;
-			meas_package.raw_measurements_ << ro, phi, ro_dot;
+			meas_package.values << ro, phi, ro_dot;
 			iss >> timestamp;
 			meas_package.timestamp_ = timestamp;
 			measurement_pack_list.push_back(meas_package);
@@ -195,8 +194,8 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 		iss >> y_gt;
 		iss >> vx_gt;
 		iss >> vy_gt;
-		gt_package.gt_values_ = VectorXd(4);
-		gt_package.gt_values_ << x_gt, y_gt, vx_gt, vy_gt;
+		gt_package.values = VectorXd(4);
+		gt_package.values << x_gt, y_gt, vx_gt, vy_gt;
 		gt_pack_list.push_back(gt_package);
 	}
 }

@@ -2,7 +2,11 @@
 #define KALMAN_FILTER_H_
 #include "Eigen/Dense"
 
-class KalmanFilter {
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
+class KalmanFilter
+{
 public:
 
   // state vector
@@ -23,15 +27,18 @@ public:
   // measurement covariance matrix
   Eigen::MatrixXd R_;
 
+  // identity matrix
+  Eigen::MatrixXd I_;
+
   /**
    * Constructor
    */
-  KalmanFilter();
+  KalmanFilter() {};
 
   /**
    * Destructor
    */
-  virtual ~KalmanFilter();
+  virtual ~KalmanFilter() {};
 
   /**
    * Init Initializes Kalman filter

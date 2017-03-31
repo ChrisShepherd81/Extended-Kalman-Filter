@@ -1,7 +1,7 @@
 #ifndef FusionEKF_H_
 #define FusionEKF_H_
 
-#include "measurement_package.h"
+#include "Data.hpp"
 #include "Eigen/Dense"
 #include <vector>
 #include <string>
@@ -19,7 +19,7 @@ public:
   /**
   * Destructor.
   */
-  virtual ~FusionEKF();
+  virtual ~FusionEKF() {};
 
   /**
   * Run the whole flow of the Kalman Filter from here.
