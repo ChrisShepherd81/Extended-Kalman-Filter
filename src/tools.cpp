@@ -3,8 +3,7 @@
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth)
 {
-	VectorXd rmse(4);
-	rmse << 0,0,0,0;
+	VectorXd rmse = VectorXd::Zero(4);
 
 	if(estimations.size() != ground_truth.size() || estimations.size() <= 0 )
 	{
@@ -45,7 +44,7 @@ MatrixXd Tools::CalculateProcessCovarianceMatrix(double dt,double noise_ax, doub
 ///////////////////////////////////////////////////////////////////////////////////////
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 {
-	MatrixXd Hj(3,4);
+	MatrixXd Hj = MatrixXd::Zero(3,4);
 
 	//recover state parameters
 	float px = x_state(0);
@@ -77,6 +76,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 	Hj(2,2) = px/sqr_px2py2;
 	Hj(2,3) = py/sqr_px2py2;
 
+	std::cout<< "Hj = \n" << Hj << std::endl;
 	return Hj;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

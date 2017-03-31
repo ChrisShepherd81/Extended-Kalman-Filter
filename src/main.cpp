@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
     out_file_ << fusionEKF.ekf_.x_(1) << "\t";
     out_file_ << fusionEKF.ekf_.x_(2) << "\t";
     out_file_ << fusionEKF.ekf_.x_(3) << "\t";
-    std::cout << "Write to output\n";
 
     // output the measurements
     if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER) {
