@@ -102,11 +102,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   /*****************************************************************************
    *  Prediction
    ****************************************************************************/
-  //TODO time?
-  double dt = (measurement.timestamp_ - this->previous_timestamp_)/100000.0;
+  //calculate time delta and convert from mu secs to secs.
+  double dt = (measurement.timestamp_ - this->previous_timestamp_)/1.0e6;
   this->previous_timestamp_ = measurement.timestamp_;
-
-  std::cout << "time: " << dt << std::endl;
 
   //Update the state transition matrix F according to the new elapsed time.
   ekf_.F_(0,2) = dt;
