@@ -1,19 +1,26 @@
 #ifndef TOOLS_H_
 #define TOOLS_H_
 #include <vector>
+#include <iostream>
+
 #include "Eigen/Dense"
 
-class Tools {
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+using std::vector;
+
+class Tools
+{
 public:
   /**
   * Constructor.
   */
-  Tools();
+  Tools() {}
 
   /**
   * Destructor.
   */
-  virtual ~Tools();
+  virtual ~Tools() {}
 
   /**
   * A helper method to calculate RMSE.
