@@ -25,14 +25,9 @@ void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_l
 
 int main(int argc, char* argv[])
 {
-#if LLDB_MI
-  string in_file_name_ = "./data/sample-laser-radar-measurement-data-1.txt";
-  string out_file_name_ = "./data/output.txt";
-#else
   check_arguments(argc, argv);
   string in_file_name_ = argv[1];
   string out_file_name_ = argv[2];
-#endif
 
   //open file streams
   ifstream in_file_(in_file_name_.c_str(), ifstream::in);
