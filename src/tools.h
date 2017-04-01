@@ -40,6 +40,8 @@ public:
   MatrixXd CalculateProcessCovarianceMatrix(double dt,double noise_ax = 9.0,
   											double noise_ay=9.0 );
 
+  VectorXd MapRadarPolarToCartesianPosition(const VectorXd& x_radar);
+
 };
 
 #endif /* TOOLS_H_ */

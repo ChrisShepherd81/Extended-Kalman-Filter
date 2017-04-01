@@ -20,15 +20,16 @@ FusionEKF::FusionEKF()
   R_radar_ = MatrixXd(3, 3);
   H_laser_ = MatrixXd(2, 4);
 
-  //measurement covariance matrix - laser
+  //measurement noise matrix - laser
   R_laser_ << 0.0225, 0,
 		  	  0,      0.0225;
 
-  //measurement covariance matrix - radar
+  //measurement noise matrix - radar
   R_radar_ << 	0.09, 0,      0,
 				0,    0.0009, 0,
 				0,    0,      0.09;
 
+  //measurement matrix
   H_laser_ << 1, 0, 0, 0,
 		  	  0, 1, 0, 0;
 
@@ -60,23 +61,20 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
 		  0, 0, 1000, 0,
 		  0, 0, 0, 1000;
 
-    //initalize time
+    //Initialize time
 	this->previous_timestamp_ = measurement.timestamp_;
 
-    if (measurement.sensor_type == MeasurementPackage::RADAR) {
-		/**
-		TODO Convert radar from polar to cartesian coordinates and initialize state.
-		*/
-    	VectorXd x = VectorXd(4);
-		x << 1, 1, 1, 1;
+    if (measurement.sensor_type == MeasurementPackage::RADAR)
+    {
+		//Convert radar from polar to cartesian coordinates and initialize state.
+    	VectorXd x = tools.MapRadarPolarToCartesianPosition(measurement.values);
 		MatrixXd Hj = tools.CalculateJacobian(x);
     	std::cout << "Initialize radar\n";
     	ekf_.Init(x, P, F, Hj, R_radar_);
     }
-    else if (measurement.sensor_type == MeasurementPackage::LASER) {
-		/**
-		Initialize state.
-		*/
+    else if (measurement.sensor_type == MeasurementPackage::LASER)
+    {
+		//Initialize state.
     	VectorXd x = VectorXd(4);
     	x << measurement.values(0), measurement.values(1), 0, 0;
     	std::cout << "Initialize laser\n";

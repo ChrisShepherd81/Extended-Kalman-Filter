@@ -80,3 +80,15 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 	return Hj;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
+VectorXd Tools::MapRadarPolarToCartesianPosition(const VectorXd& x_radar)
+{
+	VectorXd result = VectorXd::Zero(4);
+	double rho = x_radar(0);
+	double phi = x_radar(1);
+
+	result(0) = rho*std::cos(phi);
+	result(1) = rho*std::sin(phi);
+
+	return result;
+}
+///////////////////////////////////////////////////////////////////////////////////////
