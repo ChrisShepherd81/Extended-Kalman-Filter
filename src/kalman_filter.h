@@ -1,6 +1,7 @@
 #ifndef KALMAN_FILTER_H_
 #define KALMAN_FILTER_H_
 #include "Eigen/Dense"
+#include "tools.h"
 
 #include <iostream>
 
@@ -77,10 +78,7 @@ public:
   void UpdateEKF(const Eigen::VectorXd &z);
 
 private:
-  /**
-   * A helper method to map x' into polar coordinates
-   */
-  VectorXd MapXprimeToPolarCoordinates(const VectorXd& x_prime);
+  Tools tools;
 
 };
 

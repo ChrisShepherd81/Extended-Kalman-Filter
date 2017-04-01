@@ -92,3 +92,29 @@ VectorXd Tools::MapRadarPolarToCartesianPosition(const VectorXd& x_radar)
 	return result;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
+VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
+{
+	VectorXd hx(3);
+
+	//recover state parameters
+	float px = x_prime(0);
+	float py = x_prime(1);
+	float vx = x_prime(2);
+	float vy = x_prime(3);
+
+	double px2py2 = std::pow(px, 2) + std::pow(py, 2);
+	if(px2py2 <= 0)
+	{
+		std::cout << "Error on MapXprimeToPolarCoordinates()" << std::endl;
+		return hx;
+	}
+	double sqrt_px2py2 = std::sqrt(px2py2);
+
+	hx << 	sqrt_px2py2,
+			std::atan2(py, px),
+			(px*vx+py*vy)/sqrt_px2py2;
+
+	std::cout<< "hx = \n" << hx << std::endl;
+	return hx;
+}
+///////////////////////////////////////////////////////////////////////////////////////
