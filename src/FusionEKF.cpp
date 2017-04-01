@@ -38,64 +38,19 @@ FusionEKF::FusionEKF()
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
 {
   /*****************************************************************************
-   *  Initialization
-   ****************************************************************************/
-  if (!is_initialized_) {
-    /**
-    TODO:
-      * Initialize the state ekf_.x_ with the first measurement.
-      * Create the covariance matrix.
-      * Remember: you'll need to convert radar from polar to cartesian coordinates.
-    */
-    //the initial transition matrix F
-    MatrixXd F = MatrixXd(4, 4);
-    F <<  1, 0, 1, 0,
-		  0, 1, 0, 1,
-		  0, 0, 1, 0,
-		  0, 0, 0, 1;
-
-    //state covariance matrix P
-    MatrixXd P = MatrixXd(4, 4);
-    P <<  1, 0, 0, 0,
-		  0, 1, 0, 0,
-		  0, 0, 1000, 0,
-		  0, 0, 0, 1000;
-
-    //Initialize time
-	this->previous_timestamp_ = measurement.timestamp_;
-
-    if (measurement.sensor_type == MeasurementPackage::RADAR)
-    {
-		//Convert radar from polar to cartesian coordinates and initialize state.
-    	VectorXd x = tools.MapRadarPolarToCartesianPosition(measurement.values);
-		MatrixXd Hj = tools.CalculateJacobian(x);
-    	std::cout << "Initialize radar\n";
-    	ekf_.Init(x, P, F, Hj, R_radar_);
-    }
-    else if (measurement.sensor_type == MeasurementPackage::LASER)
-    {
-		//Initialize state.
-    	VectorXd x = VectorXd(4);
-    	x << measurement.values(0), measurement.values(1), 0, 0;
-    	std::cout << "Initialize laser\n";
-    	ekf_.Init(x, P, F, H_laser_, R_laser_);
-    }
-
-    // done initializing, no need to predict or update
-    is_initialized_ = true;
-    return;
+  *  Initialization
+  ****************************************************************************/
+  if (!is_initialized_)
+  {
+	  this->InitalizeKalmanFilter(measurement);
   }
 
   /*****************************************************************************
    *  Prediction
    ****************************************************************************/
-  //calculate time delta and convert from mu secs to secs.
-  double dt = (measurement.timestamp_ - this->previous_timestamp_)/1.0e6;
-  this->previous_timestamp_ = measurement.timestamp_;
-
   //Update the state transition matrix F according to the new elapsed time.
-  ekf_.F_(0,2) = dt;
-  ekf_.F_(1,3) = dt;
+  double dt = this->GetDeltaTime(measurement.timestamp_);
+  this->UpdateStateTransitionMatrix(dt);
 
   //Update the process noise covariance matrix
   ekf_.Q_ = tools.CalculateProcessCovarianceMatrix(dt);
@@ -105,13 +60,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   /*****************************************************************************
    *  Update
    ****************************************************************************/
-
-  /**
-   TODO:
-     * Use the sensor type to perform the update step.
-     * Update the state and covariance matrices.
-   */
-
   //Use the sensor type to perform the update step
   if (measurement.sensor_type == MeasurementPackage::RADAR)
   {
@@ -131,5 +79,59 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   // print the output
   cout << "x_ = \n" << ekf_.x_ << endl;
   cout << "P_ = \n" << ekf_.P_ << endl;
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void FusionEKF::InitalizeKalmanFilter(const MeasurementPackage &first_measurement)
+{
+	//the initial transition matrix F
+	MatrixXd F = MatrixXd(4, 4);
+	F <<  1, 0, 1, 0,
+		  0, 1, 0, 1,
+		  0, 0, 1, 0,
+		  0, 0, 0, 1;
+
+	//state covariance matrix P
+	MatrixXd P = MatrixXd(4, 4);
+	P <<  1, 0, 0, 0,
+		  0, 1, 0, 0,
+		  0, 0, 1000, 0,
+		  0, 0, 0, 1000;
+
+	//Initialize time
+	this->previous_timestamp_ = first_measurement.timestamp_;
+
+	if (first_measurement.sensor_type == MeasurementPackage::RADAR)
+	{
+		//Convert radar from polar to cartesian coordinates and initialize state.
+		VectorXd x = tools.MapRadarPolarToCartesianPosition(first_measurement.values);
+		MatrixXd Hj = tools.CalculateJacobian(x);
+		std::cout << "Initialize radar\n";
+		ekf_.Init(x, P, F, Hj, R_radar_);
+	}
+	else if (first_measurement.sensor_type == MeasurementPackage::LASER)
+	{
+		//Initialize state.
+		VectorXd x = VectorXd(4);
+		x << first_measurement.values(0), first_measurement.values(1), 0, 0;
+		std::cout << "Initialize laser\n";
+		ekf_.Init(x, P, F, H_laser_, R_laser_);
+	}
+
+	this->is_initialized_ = true;
+}
+///////////////////////////////////////////////////////////////////////////////////////
+double FusionEKF::GetDeltaTime(long timestamp)
+{
+	//calculate time delta and convert from mu secs to secs.
+	double dt = (timestamp - this->previous_timestamp_)/1.0e6;
+	this->previous_timestamp_ = timestamp;
+	return dt;
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void FusionEKF::UpdateStateTransitionMatrix(double timeDelta)
+{
+	//Update the state transition matrix F according to the new elapsed time.
+	ekf_.F_(0,2) = timeDelta;
+	ekf_.F_(1,3) = timeDelta;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

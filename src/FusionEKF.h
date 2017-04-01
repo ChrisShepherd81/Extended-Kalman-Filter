@@ -32,6 +32,10 @@ public:
   KalmanFilter ekf_;
 
 private:
+  void InitalizeKalmanFilter(const MeasurementPackage &first_measurement);
+  double GetDeltaTime(long timestamp);
+  void UpdateStateTransitionMatrix(double timeDelta);
+
   // check whether the tracking toolbox was initiallized or not (first measurement)
   bool is_initialized_;
 
