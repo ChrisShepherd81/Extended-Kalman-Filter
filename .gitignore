@@ -4,3 +4,7 @@
 /hs_err_pid19580.log
 /DebugMac/
 /.DS_Store
+/kalman_tracker_mac.app/
+/data_in.txt
+/data_out.txt
+/kalman-tracker.py
