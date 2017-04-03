@@ -61,11 +61,14 @@ int main(int argc, char* argv[])
     out_file_ << fusionEKF.ekf_.x_(3) << "\t";
 
     // output the measurements
-    if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER) {
+    if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER)
+    {
       // output the estimation
       out_file_ << measurement_pack_list[k].values(0) << "\t";
       out_file_ << measurement_pack_list[k].values(1) << "\t";
-    } else if (measurement_pack_list[k].sensor_type == MeasurementPackage::RADAR) {
+    }
+    else if (measurement_pack_list[k].sensor_type == MeasurementPackage::RADAR)
+    {
       // output the estimation in the cartesian coordinates
       float ro = measurement_pack_list[k].values(0);
       float phi = measurement_pack_list[k].values(1);
@@ -86,6 +89,20 @@ int main(int argc, char* argv[])
   // compute the accuracy (RMSE)
   Tools tools;
   cout << "Accuracy - RMSE:" << endl << tools.CalculateRMSE(estimations, ground_truth) << endl;
+
+  VectorXd targetRMSE(4);
+  if(in_file_name_.find("1") != string::npos)
+  {
+	  targetRMSE << 0.08, 0.08, 0.60, 0.60;
+	  cout << "Project target RMSE:" << endl << targetRMSE << endl;
+
+  }
+  if(in_file_name_.find("2") != string::npos)
+  {
+	  targetRMSE << 0.20, 0.20, 0.50, 0.85;
+	  cout << "Project target RMSE:" << endl << targetRMSE << endl;
+
+  }
 
   // close files
   if (out_file_.is_open()) {

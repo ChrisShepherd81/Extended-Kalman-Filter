@@ -76,9 +76,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
 	  ekf_.Update(measurement.values);
   }
 
+#if PRINT
   // print the output
   cout << "x_ = \n" << ekf_.x_ << endl;
   cout << "P_ = \n" << ekf_.P_ << endl;
+#endif
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 void FusionEKF::InitalizeKalmanFilter(const MeasurementPackage &first_measurement)
