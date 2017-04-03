@@ -49,8 +49,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
    *  Prediction
    ****************************************************************************/
   double dt = this->GetDeltaTime(measurement.timestamp_);
-  ekf_.Q_ = tools.CalculateProcessCovarianceMatrix(dt);
-  ekf_.Predict(dt);
+  ekf.Q = tools.CalculateProcessCovarianceMatrix(dt);
+  ekf.Predict(dt);
 
   /*****************************************************************************
    *  Update
@@ -59,22 +59,22 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   if (measurement.sensor_type == MeasurementPackage::RADAR)
   {
 	  // Radar updates
-	  ekf_.R_ = this->R_radar_;
-	  ekf_.H_ = tools.CalculateJacobian(ekf_.GetX());
-	  ekf_.UpdateEKF(measurement.values);
+	  ekf.R = this->R_radar_;
+	  ekf.H = tools.CalculateJacobian(ekf.GetX());
+	  ekf.UpdateEKF(measurement.values);
   }
   else
   {
 	  // Laser updates
-	  ekf_.R_ = this->R_laser_;
-	  ekf_.H_ = this->H_laser_;
-	  ekf_.Update(measurement.values);
+	  ekf.R = this->R_laser_;
+	  ekf.H = this->H_laser_;
+	  ekf.Update(measurement.values);
   }
 
 #if PRINT
   // print the output
-  cout << "x_ = \n" << ekf_.GetX() << endl;
-  cout << "P_ = \n" << ekf_.GetP() << endl;
+  cout << "x_ = \n" << ekf.GetX() << endl;
+  cout << "P_ = \n" << ekf.GetP() << endl;
 #endif
 }
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ void FusionEKF::InitalizeKalmanFilter(const MeasurementPackage &first_measuremen
 		VectorXd x = tools.MapRadarPolarToCartesianPosition(first_measurement.values);
 		MatrixXd Hj = tools.CalculateJacobian(x);
 		std::cout << "Initialize radar\n";
-		ekf_.Init(x, P, F, Hj, R_radar_);
+		ekf.Init(x, P, F, Hj, R_radar_);
 	}
 	else if (first_measurement.sensor_type == MeasurementPackage::LASER)
 	{
@@ -111,7 +111,7 @@ void FusionEKF::InitalizeKalmanFilter(const MeasurementPackage &first_measuremen
 		VectorXd x = VectorXd(4);
 		x << first_measurement.values(0), first_measurement.values(1), 0, 0;
 		std::cout << "Initialize laser\n";
-		ekf_.Init(x, P, F, H_laser_, R_laser_);
+		ekf.Init(x, P, F, H_laser_, R_laser_);
 	}
 
 	this->is_initialized_ = true;

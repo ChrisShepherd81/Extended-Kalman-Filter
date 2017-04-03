@@ -11,14 +11,7 @@
 
 class FusionEKF {
 public:
-  /**
-  * Constructor.
-  */
   FusionEKF();
-
-  /**
-  * Destructor.
-  */
   virtual ~FusionEKF() {};
 
   /**
@@ -29,7 +22,7 @@ public:
   /**
   * Kalman Filter update and prediction math lives in here.
   */
-  KalmanFilter ekf_;
+  KalmanFilter ekf;
 
 private:
   void InitalizeKalmanFilter(const MeasurementPackage &first_measurement);

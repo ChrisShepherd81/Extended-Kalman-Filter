@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
 
     // output the estimation
-    VectorXd estimation = fusionEKF.ekf_.GetX();
+    VectorXd estimation = fusionEKF.ekf.GetX();
     out_file_ << estimation(0) << "\t";
     out_file_ << estimation(1) << "\t";
     out_file_ << estimation(2) << "\t";

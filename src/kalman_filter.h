@@ -30,16 +30,13 @@ class KalmanFilter
 
 public:
 	// process noise covariance matrix
-	Eigen::MatrixXd Q_;
+	Eigen::MatrixXd Q;
 
 	// measurement noise covariance matrix
-	Eigen::MatrixXd R_;
+	Eigen::MatrixXd R;
 
-	// measurement matrix
-	Eigen::MatrixXd H_;
-
-	// jacobi matrix
-	Eigen::MatrixXd Hj_;
+	// measurement/jacobian matrix
+	Eigen::MatrixXd H;
 
 	KalmanFilter() {};
 	virtual ~KalmanFilter() {};
