@@ -55,7 +55,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 	float px2py2 = std::pow(px, 2) + std::pow(py, 2);
 
 	//check division by zero
-	if(px2py2 == 0)
+	if(std::fabs(px2py2) < _epsilon)
 	{
 		std::cout << "CalculateJacobian() - Error - Division by Zero" << std::endl;
 		return Hj;
@@ -75,8 +75,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
 	Hj(2,1) = (px*(vy*px-vx*py))/sqr_px2py2_3;
 	Hj(2,2) = px/sqr_px2py2;
 	Hj(2,3) = py/sqr_px2py2;
-
+#if PRINT
 	std::cout<< "Hj = \n" << Hj << std::endl;
+#endif
 	return Hj;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ VectorXd Tools::MapRadarPolarToCartesianPosition(const VectorXd& x_radar)
 ///////////////////////////////////////////////////////////////////////////////////////
 VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
 {
-	VectorXd hx(3);
+	VectorXd hx = VectorXd::Zero(3);
 
 	//recover state parameters
 	float px = x_prime(0);
@@ -103,7 +104,7 @@ VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
 	float vy = x_prime(3);
 
 	double px2py2 = std::pow(px, 2) + std::pow(py, 2);
-	if(px2py2 <= 0)
+	if(std::fabs(px2py2) < _epsilon)
 	{
 		std::cout << "Error on MapXprimeToPolarCoordinates()" << std::endl;
 		return hx;
@@ -113,8 +114,23 @@ VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
 	hx << 	sqrt_px2py2,
 			std::atan2(py, px),
 			(px*vx+py*vy)/sqrt_px2py2;
-
+#if PRINT
 	std::cout<< "hx = \n" << hx << std::endl;
+#endif
 	return hx;
+}
+///////////////////////////////////////////////////////////////////////////////////////
+VectorXd Tools::AdjustPhiInVector(VectorXd& y)
+{
+	double phi = y(1);
+	while( std::fabs(phi) > M_PI)
+	{
+		if(phi < 0)
+			phi += 2*M_PI;
+		else
+			phi -= 2*M_PI;
+	}
+	y(1) = phi;
+	return y;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

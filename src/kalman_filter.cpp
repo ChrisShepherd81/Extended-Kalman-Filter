@@ -12,7 +12,9 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 ///////////////////////////////////////////////////////////////////////////////////////
 void KalmanFilter::Predict()
 {
+#if PRINT
 	std::cout << "KalmanFilter::Predict()\n";
+#endif
 	x_ = F_ * x_;
 	MatrixXd F_T = F_.transpose();
 	P_ = F_ * P_ * F_T + Q_;
@@ -20,7 +22,9 @@ void KalmanFilter::Predict()
 ///////////////////////////////////////////////////////////////////////////////////////
 void KalmanFilter::Update(const VectorXd &z)
 {
+#if PRINT
 	std::cout << "KalmanFilter::Update()\n";
+#endif
 	VectorXd z_pred = H_ * x_;
 	VectorXd y = z - z_pred;
 	MatrixXd Ht = H_.transpose();
@@ -35,7 +39,9 @@ void KalmanFilter::Update(const VectorXd &z)
 ///////////////////////////////////////////////////////////////////////////////////////
 void KalmanFilter::UpdateEKF(const VectorXd &z)
 {
+#if PRINT
 	std::cout << "KalmanFilter::UpdateEKF()\n";
+#endif
 	VectorXd z_pred = tools.MapXprimeToPolarCoordinates(x_);
 	VectorXd y = z - z_pred;
 	MatrixXd Ht = H_.transpose();
@@ -44,7 +50,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
 	MatrixXd K = PHt * S.inverse();
 
 	//new estimate
-	x_ = x_ + (K * y);
+	x_ = x_ + (K * tools.AdjustPhiInVector(y));
 	P_ = (I_ - K * H_) * P_;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

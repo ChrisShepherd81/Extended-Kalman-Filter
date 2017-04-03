@@ -2,3 +2,5 @@
 /*.stackdump
 /Debug Mac/
 /hs_err_pid19580.log
+/DebugMac/
+/.DS_Store

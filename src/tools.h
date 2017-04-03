@@ -6,12 +6,15 @@
 
 #include "Eigen/Dense"
 
+#define PRINT 0
+
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
 
 class Tools
 {
+	const double _epsilon = 1e-9;
 public:
   /**
   * Constructor.
@@ -49,6 +52,11 @@ public:
    * A helper method to map x' into polar coordinates
    */
   VectorXd MapXprimeToPolarCoordinates(const VectorXd& x_prime);
+
+  /**
+    * A helper method that adjust phi in vector y to [-pi, pi]
+    */
+  VectorXd AdjustPhiInVector(VectorXd& y);
 
 };
 
