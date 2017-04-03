@@ -55,10 +55,11 @@ int main(int argc, char* argv[])
     fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
 
     // output the estimation
-    out_file_ << fusionEKF.ekf_.x_(0) << "\t";
-    out_file_ << fusionEKF.ekf_.x_(1) << "\t";
-    out_file_ << fusionEKF.ekf_.x_(2) << "\t";
-    out_file_ << fusionEKF.ekf_.x_(3) << "\t";
+    VectorXd estimation = fusionEKF.ekf_.GetX();
+    out_file_ << estimation(0) << "\t";
+    out_file_ << estimation(1) << "\t";
+    out_file_ << estimation(2) << "\t";
+    out_file_ << estimation(3) << "\t";
 
     // output the measurements
     if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER)
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
     out_file_ << gt_pack_list[k].values(2) << "\t";
     out_file_ << gt_pack_list[k].values(3) << "\n";
 
-    estimations.push_back(fusionEKF.ekf_.x_);
+    estimations.push_back(estimation);
     ground_truth.push_back(gt_pack_list[k].values);
   }
 

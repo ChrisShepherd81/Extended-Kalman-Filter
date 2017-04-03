@@ -6,7 +6,7 @@
 
 #include "Eigen/Dense"
 
-#define PRINT 0
+#define PRINT 1
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -56,7 +56,7 @@ public:
   /**
     * A helper method that adjust phi in vector y to [-pi, pi]
     */
-  VectorXd AdjustPhiInVector(VectorXd& y);
+  VectorXd AdjustPhiVectorY(VectorXd& y);
 
 };
 

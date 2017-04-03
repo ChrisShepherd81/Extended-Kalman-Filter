@@ -10,14 +10,16 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 	I_ = MatrixXd::Identity(x_.size(), x_.size());
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-void KalmanFilter::Predict()
+void KalmanFilter::Predict(double deltaTime)
 {
 #if PRINT
 	std::cout << "KalmanFilter::Predict()\n";
 #endif
+	//Update the state transition matrix F according to the new elapsed time.
+	this->updateStateTransitionMatrix(deltaTime);
+
 	x_ = F_ * x_;
-	MatrixXd F_T = F_.transpose();
-	P_ = F_ * P_ * F_T + Q_;
+	P_ = F_ * P_ * F_.transpose() + Q_;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 void KalmanFilter::Update(const VectorXd &z)
@@ -50,7 +52,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
 	MatrixXd K = PHt * S.inverse();
 
 	//new estimate
-	x_ = x_ + (K * tools.AdjustPhiInVector(y));
+	x_ = x_ + (K * tools.AdjustPhiVectorY(y));
 	P_ = (I_ - K * H_) * P_;
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void KalmanFilter::updateStateTransitionMatrix(double timeDelta)
+{
+	//Update the state transition matrix F according to the new elapsed time.
+	this->F_(0,2) = timeDelta;
+	this->F_(1,3) = timeDelta;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

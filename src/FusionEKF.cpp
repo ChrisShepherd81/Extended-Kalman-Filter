@@ -48,14 +48,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   /*****************************************************************************
    *  Prediction
    ****************************************************************************/
-  //Update the state transition matrix F according to the new elapsed time.
   double dt = this->GetDeltaTime(measurement.timestamp_);
-  this->UpdateStateTransitionMatrix(dt);
-
-  //Update the process noise covariance matrix
   ekf_.Q_ = tools.CalculateProcessCovarianceMatrix(dt);
-
-  ekf_.Predict();
+  ekf_.Predict(dt);
 
   /*****************************************************************************
    *  Update
@@ -65,7 +60,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   {
 	  // Radar updates
 	  ekf_.R_ = this->R_radar_;
-	  ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
+	  ekf_.H_ = tools.CalculateJacobian(ekf_.GetX());
 	  ekf_.UpdateEKF(measurement.values);
   }
   else
@@ -78,8 +73,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
 
 #if PRINT
   // print the output
-  cout << "x_ = \n" << ekf_.x_ << endl;
-  cout << "P_ = \n" << ekf_.P_ << endl;
+  cout << "x_ = \n" << ekf_.GetX() << endl;
+  cout << "P_ = \n" << ekf_.GetP() << endl;
 #endif
 }
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -128,12 +123,5 @@ double FusionEKF::GetDeltaTime(long timestamp)
 	double dt = (timestamp - this->previous_timestamp_)/1.0e6;
 	this->previous_timestamp_ = timestamp;
 	return dt;
-}
-///////////////////////////////////////////////////////////////////////////////////////
-void FusionEKF::UpdateStateTransitionMatrix(double timeDelta)
-{
-	//Update the state transition matrix F according to the new elapsed time.
-	ekf_.F_(0,2) = timeDelta;
-	ekf_.F_(1,3) = timeDelta;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

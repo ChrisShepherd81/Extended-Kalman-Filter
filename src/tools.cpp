@@ -120,7 +120,7 @@ VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
 	return hx;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-VectorXd Tools::AdjustPhiInVector(VectorXd& y)
+VectorXd Tools::AdjustPhiVectorY(VectorXd& y)
 {
 	double phi = y(1);
 	while( std::fabs(phi) > M_PI)
