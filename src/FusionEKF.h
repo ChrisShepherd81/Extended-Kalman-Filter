@@ -34,11 +34,15 @@ private:
   // previous timestamp
   long previous_timestamp_;
 
+  //measurement noise covariance matrix laser
+  Eigen::MatrixXd R_laser_;
+  //measurement noise covariance matrix radar
+  Eigen::MatrixXd R_radar_;
+  //measurement model mapping matrix
+  Eigen::MatrixXd H_laser_;
+
   // tool object used to compute Jacobian and RMSE
   Tools tools;
-  Eigen::MatrixXd R_laser_;
-  Eigen::MatrixXd R_radar_;
-  Eigen::MatrixXd H_laser_;
 };
 
 #endif /* FusionEKF_H_ */

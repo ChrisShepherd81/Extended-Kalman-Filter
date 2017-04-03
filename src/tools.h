@@ -40,8 +40,8 @@ public:
   /**
   * A helper method to calculate process noise covariance matrix.
   */
-  MatrixXd CalculateProcessCovarianceMatrix(double dt,double noise_ax = 9.0,
-  											double noise_ay=9.0 );
+  MatrixXd CalculateProcessCovarianceMatrix(double dt,double noise_ax = 9,
+  											double noise_ay=9 );
 
   /**
   * A helper method to map x_radar into cartesian coordinates
@@ -56,7 +56,7 @@ public:
   /**
     * A helper method that adjust phi in vector y to [-pi, pi]
     */
-  VectorXd AdjustPhiVectorY(VectorXd& y);
+  VectorXd& AdjustPhiVectorY(VectorXd& y);
 
 };
 

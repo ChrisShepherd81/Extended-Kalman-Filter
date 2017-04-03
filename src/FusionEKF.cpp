@@ -29,7 +29,7 @@ FusionEKF::FusionEKF()
 				0,    0.0009, 0,
 				0,    0,      0.09;
 
-  //measurement matrix
+  //observation model mapping matrix
   H_laser_ << 1, 0, 0, 0,
 		  	  0, 1, 0, 0;
 

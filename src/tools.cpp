@@ -31,7 +31,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 ///////////////////////////////////////////////////////////////////////////////////////
 MatrixXd Tools::CalculateProcessCovarianceMatrix(double dt,double noise_ax, double noise_ay )
 {
-	MatrixXd Q(4,4);
+	MatrixXd Q = MatrixXd::Zero(4,4);
 	double dt_2 = std::pow(dt,2);
 	double dt_3 = dt_2*dt;
 	double dt_4 = dt_3*dt;
@@ -120,7 +120,7 @@ VectorXd Tools::MapXprimeToPolarCoordinates(const VectorXd& x_prime)
 	return hx;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-VectorXd Tools::AdjustPhiVectorY(VectorXd& y)
+VectorXd& Tools::AdjustPhiVectorY(VectorXd& y)
 {
 	double phi = y(1);
 	while( std::fabs(phi) > M_PI)

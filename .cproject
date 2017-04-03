@@ -125,7 +125,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.56583977" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
 								<option id="gnu.cpp.compiler.option.optimization.level.973682920" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.100587692" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.dialect.std.650261312" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.650261312" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.196581294" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1051529083" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
@@ -135,6 +135,20 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.exe.debug.1083992513.1399906037.1344189183" name="/" resourcePath="build">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.2125941854" name="MacOSX GCC" superClass="cdt.managedbuild.toolchain.gnu.macosx.base" unusedChildren="">
+							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.1352832858" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base.267908011"/>
+							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.1146295414" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.84444819"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.base.1256738839" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base.1433253424"/>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.209287194" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base.1527750141"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.1119425879" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.56583977"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1400720264" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1051529083"/>
+						</toolChain>
+					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.cygwin.exe.debug.1083992513.1399906037.692293575" name="CMakeLists.txt" rcbsApplicability="disable" resourcePath="CMakeLists.txt" toolsToInvoke=""/>
+					<sourceEntries>
+						<entry excluding="build|CMakeLists.txt" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
