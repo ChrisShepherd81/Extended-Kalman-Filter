@@ -96,13 +96,11 @@ int main(int argc, char* argv[])
   {
 	  targetRMSE << 0.08, 0.08, 0.60, 0.60;
 	  cout << "Project target RMSE:" << endl << targetRMSE << endl;
-
   }
   if(in_file_name_.find("2") != string::npos)
   {
 	  targetRMSE << 0.20, 0.20, 0.50, 0.85;
 	  cout << "Project target RMSE:" << endl << targetRMSE << endl;
-
   }
 
   // close files
