@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+' skinparam classAttributeFontName Cambria
+' skinparam classAttributeFontSize 13
+class Data{
+ SensorType : enum
+ values : VectorXd 
+}
+class Tools{
+  -_epsilon : const double 
+  +CalculateRMSE()
+  +CalculateJacobian()
+  +CalculateProcessCovarianceMatrix()
+  +MapRadarPolarToCartesianPosition()
+  +MapXprimeToPolarCoordinates()
+  +AdjustPhiVectorY()
+}
+class KalmanFilter{
+  -x_ Eigen::VectorXd 
+  -P_ Eigen::MatrixXd 
+  -F_ Eigen::MatrixXd 
+  -I_ Eigen::MatrixXd 
+  +Q Eigen::MatrixXd 
+  +H Eigen::MatrixXd 
+  +R Eigen::MatrixXd 
+
+  -updateStateTransitionMatrix() : void
+  +Init() : void
+  +Predict() : void
+  +Update() : void
+  +UpdateEKF() : void
+  +GetX() const : VectorXd
+  +GetP() const : MatrixXd
+
+}
+class FusionEKF{
+ +ProcessMeasurement() : void
+}
+Tools *-- KalmanFilter
+Tools *-- FusionEKF
+Data <|-- MeasurementPackage
+Data <|-- GroundTruthPackage
+KalmanFilter *-- FusionEKF
+MeasurementPackage .. FusionEKF
+@enduml
