@@ -9,7 +9,6 @@
 #define SRC_PLOT_PLOTDATA_HPP_
 
 #include <vector>
-
 #include "../Eigen/Dense"
 
 class PlotData {
