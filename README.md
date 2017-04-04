@@ -8,8 +8,7 @@ Self-Driving Car Engineer Nanodegree Program Project 1 - Term 2
 * cmake >= 3.5
 * make >= 4.1
 * gcc/g++ >= 5.4
-Optional:
-* GNUplot >= 5.0.6
+* (optional) GNUplot >= 5.0.6
 
 ## Basic Build Instructions
 
