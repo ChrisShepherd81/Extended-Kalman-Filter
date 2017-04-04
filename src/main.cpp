@@ -7,6 +7,13 @@
 #include "FusionEKF.h"
 #include "Data.hpp"
 
+#define GNU_PLOT 0
+
+#if GNU_PLOT
+#include "plot/gnuplot_i.hpp"
+#include "plot/PlotData.hpp"
+#endif
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -47,6 +54,13 @@ int main(int argc, char* argv[])
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
 
+#if GNU_PLOT
+  PlotData plot_estimations("Estimations");
+  PlotData plot_laser("Laser Measurements");
+  PlotData plot_radar("Radar Measurements");
+  PlotData plot_ground("Ground truth");
+#endif
+
   //Call the EKF-based fusion
   size_t N = measurement_pack_list.size();
   for (size_t k = 0; k < N; ++k) {
@@ -61,20 +75,33 @@ int main(int argc, char* argv[])
     out_file_ << estimation(2) << "\t";
     out_file_ << estimation(3) << "\t";
 
+#if GNU_PLOT
+    plot_estimations.addPoint(estimation);
+#endif
+
     // output the measurements
     if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER)
     {
-      // output the estimation
+      // output the measurements
       out_file_ << measurement_pack_list[k].values(0) << "\t";
       out_file_ << measurement_pack_list[k].values(1) << "\t";
+#if GNU_PLOT
+      plot_laser.addPoint(measurement_pack_list[k].values);
+#endif
     }
     else if (measurement_pack_list[k].sensor_type == MeasurementPackage::RADAR)
     {
-      // output the estimation in the cartesian coordinates
+      // output the measurements in the cartesian coordinates
       float ro = measurement_pack_list[k].values(0);
       float phi = measurement_pack_list[k].values(1);
-      out_file_ << ro * cos(phi) << "\t"; // p1_meas
-      out_file_ << ro * sin(phi) << "\t"; // ps_meas
+      double x = ro * cos(phi);
+      double y = ro * sin(phi);
+
+      out_file_ << x << "\t"; // p1_meas
+      out_file_ << y << "\t"; // ps_meas
+#if GNU_PLOT
+      plot_radar.addPoint(x, y);
+#endif
     }
 
     // output the ground truth packages
@@ -82,6 +109,10 @@ int main(int argc, char* argv[])
     out_file_ << gt_pack_list[k].values(1) << "\t";
     out_file_ << gt_pack_list[k].values(2) << "\t";
     out_file_ << gt_pack_list[k].values(3) << "\n";
+
+#if GNU_PLOT
+    plot_ground.addPoint(gt_pack_list[k].values);
+#endif
 
     estimations.push_back(estimation);
     ground_truth.push_back(gt_pack_list[k].values);
@@ -112,6 +143,23 @@ int main(int argc, char* argv[])
     in_file_.close();
   }
 
+#if GNU_PLOT
+  Gnuplot gp;
+  gp.set_legend("top left");
+
+  gp.set_style("points pt 5 ps .5 lc rgb 'red'");
+  gp.plot_xy(plot_ground.getAllX(), plot_ground.getAllY(), plot_ground.getTitle());
+
+  gp.set_style("points pt 2 ps 0.5 lc rgb 'green'");
+  gp.plot_xy(plot_radar.getAllX(), plot_radar.getAllY(), plot_radar.getTitle());
+
+  gp.set_style("points pt 3 ps 0.5 lc rgb 'blue'");
+  gp.plot_xy(plot_laser.getAllX(), plot_laser.getAllY(), plot_laser.getTitle());
+
+  gp.set_style("points pt 1 ps 1 lc rgb 'black'");
+  gp.plot_xy(plot_estimations.getAllX(), plot_estimations.getAllY(), plot_estimations.getTitle());
+
+#endif
   return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
