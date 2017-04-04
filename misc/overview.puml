@@ -2,10 +2,7 @@
 skinparam monochrome true
 ' skinparam classAttributeFontName Cambria
 ' skinparam classAttributeFontSize 13
-class Data{
- SensorType : enum
- values : VectorXd 
-}
+
 class Tools{
   -_epsilon : const double 
   +CalculateRMSE()
@@ -35,9 +32,21 @@ class KalmanFilter{
 }
 class FusionEKF{
  +ProcessMeasurement() : void
+ 
+ -R_laser_ : MatrixXd
+ -R_radar_ : MatrixXd
+ -H_laser_ : MatrixXd
+ 
+ -InitalizeKalmanFilter() : void
+ -GetDeltaTime() : double
+ 
 }
-Tools *-- KalmanFilter
+class Data{
+ SensorType : enum
+ values : VectorXd 
+}
 Tools *-- FusionEKF
+Tools *-- KalmanFilter
 Data <|-- MeasurementPackage
 Data <|-- GroundTruthPackage
 KalmanFilter *-- FusionEKF
