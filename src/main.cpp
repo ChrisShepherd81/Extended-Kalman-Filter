@@ -1,11 +1,8 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <vector>
 #include <stdlib.h>
 #include "Eigen/Dense"
 #include "FusionEKF.h"
-#include "Data.hpp"
+#include "EkfFileHandler.h"
 
 #define GNU_PLOT 0
 
@@ -14,21 +11,13 @@
 #include "plot/PlotData.hpp"
 #endif
 
-using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-using std::vector;
 using std::string;
-using std::cerr;
 using std::cout;
-using std::ifstream;
-using std::ofstream;
 using std::endl;
-using std::istringstream;
 
 void check_arguments(int argc, char* argv[]);
-void check_files(ifstream& in_file, string& in_name, ofstream& out_file, string& out_name);
-void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_list, vector<GroundTruthPackage> &gt_pack_list);
 
 int main(int argc, char* argv[])
 {
@@ -36,16 +25,15 @@ int main(int argc, char* argv[])
   string in_file_name_ = argv[1];
   string out_file_name_ = argv[2];
 
-  //open file streams
-  ifstream in_file_(in_file_name_.c_str(), ifstream::in);
-  ofstream out_file_(out_file_name_.c_str(), ofstream::out);
+  EkfFileHandler fileHandler(in_file_name_, out_file_name_);
 
-  check_files(in_file_, in_file_name_, out_file_, out_file_name_);
+  if(!fileHandler.check_files())
+    exit(EXIT_FAILURE);
 
   //Read in the measurements and ground truth from file
   vector<MeasurementPackage> measurement_pack_list;
   vector<GroundTruthPackage> gt_pack_list;
-  read_file(in_file_, measurement_pack_list, gt_pack_list);
+  fileHandler.read_file(measurement_pack_list, gt_pack_list);
 
   // Create a Fusion EKF instance
   FusionEKF fusionEKF;
@@ -70,10 +58,7 @@ int main(int argc, char* argv[])
 
     // output the estimation
     VectorXd estimation = fusionEKF.ekf.GetX();
-    out_file_ << estimation(0) << "\t";
-    out_file_ << estimation(1) << "\t";
-    out_file_ << estimation(2) << "\t";
-    out_file_ << estimation(3) << "\t";
+    fileHandler.write_to_file(estimation);
 
 #if GNU_PLOT
     plot_estimations.addPoint(estimation);
@@ -83,8 +68,7 @@ int main(int argc, char* argv[])
     if (measurement_pack_list[k].sensor_type == MeasurementPackage::LASER)
     {
       // output the measurements
-      out_file_ << measurement_pack_list[k].values(0) << "\t";
-      out_file_ << measurement_pack_list[k].values(1) << "\t";
+      fileHandler.write_to_file(measurement_pack_list[k].values, 2);
 #if GNU_PLOT
       plot_laser.addPoint(measurement_pack_list[k].values);
 #endif
@@ -97,18 +81,17 @@ int main(int argc, char* argv[])
       double x = ro * cos(phi);
       double y = ro * sin(phi);
 
-      out_file_ << x << "\t"; // p1_meas
-      out_file_ << y << "\t"; // ps_meas
+      fileHandler.write_to_file(x);
+      fileHandler.write_to_file(y);
+
 #if GNU_PLOT
       plot_radar.addPoint(x, y);
 #endif
     }
 
     // output the ground truth packages
-    out_file_ << gt_pack_list[k].values(0) << "\t";
-    out_file_ << gt_pack_list[k].values(1) << "\t";
-    out_file_ << gt_pack_list[k].values(2) << "\t";
-    out_file_ << gt_pack_list[k].values(3) << "\n";
+    fileHandler.write_to_file(gt_pack_list[k].values);
+    fileHandler.write_to_file("\n");
 
 #if GNU_PLOT
     plot_ground.addPoint(gt_pack_list[k].values);
@@ -132,15 +115,6 @@ int main(int argc, char* argv[])
   {
 	  targetRMSE << 0.20, 0.20, 0.50, 0.85;
 	  cout << "Project target RMSE:" << endl << targetRMSE << endl;
-  }
-
-  // close files
-  if (out_file_.is_open()) {
-    out_file_.close();
-  }
-
-  if (in_file_.is_open()) {
-    in_file_.close();
   }
 
 #if GNU_PLOT
@@ -186,80 +160,3 @@ void check_arguments(int argc, char* argv[]) {
   }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void check_files(ifstream& in_file, string& in_name,
-                 ofstream& out_file, string& out_name) {
-  if (!in_file.is_open()) {
-    cerr << "Cannot open input file: " << in_name << endl;
-    exit(EXIT_FAILURE);
-  }
-
-  if (!out_file.is_open()) {
-    cerr << "Cannot open output file: " << out_name << endl;
-    exit(EXIT_FAILURE);
-  }
-}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void read_file(ifstream& in_file, vector<MeasurementPackage> &measurement_pack_list, vector<GroundTruthPackage> &gt_pack_list)
-{
-	string line;
-	// prep the measurement packages (each line represents a measurement at a
-	// timestamp)
-	while (getline(in_file, line))
-	{
-		string sensor_type;
-		MeasurementPackage meas_package;
-		GroundTruthPackage gt_package;
-		istringstream iss(line);
-		long long timestamp;
-
-		// reads first element from the current line
-		iss >> sensor_type;
-		if (sensor_type.compare("L") == 0)
-		{
-			// LASER MEASUREMENT
-
-			// read measurements at this timestamp
-			meas_package.sensor_type = MeasurementPackage::LASER;
-			meas_package.values = VectorXd(2);
-			float x;
-			float y;
-			iss >> x;
-			iss >> y;
-			meas_package.values << x, y;
-			iss >> timestamp;
-			meas_package.timestamp_ = timestamp;
-			measurement_pack_list.push_back(meas_package);
-		}
-		else if (sensor_type.compare("R") == 0)
-		{
-			// RADAR MEASUREMENT
-
-			// read measurements at this timestamp
-			meas_package.sensor_type = MeasurementPackage::RADAR;
-			meas_package.values = VectorXd(3);
-			float ro;
-			float phi;
-			float ro_dot;
-			iss >> ro;
-			iss >> phi;
-			iss >> ro_dot;
-			meas_package.values << ro, phi, ro_dot;
-			iss >> timestamp;
-			meas_package.timestamp_ = timestamp;
-			measurement_pack_list.push_back(meas_package);
-		}
-
-		// read ground truth data to compare later
-		float x_gt;
-		float y_gt;
-		float vx_gt;
-		float vy_gt;
-		iss >> x_gt;
-		iss >> y_gt;
-		iss >> vx_gt;
-		iss >> vy_gt;
-		gt_package.values = VectorXd(4);
-		gt_package.values << x_gt, y_gt, vx_gt, vy_gt;
-		gt_pack_list.push_back(gt_package);
-	}
-}

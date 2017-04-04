@@ -9,6 +9,7 @@ set(sources
     src/kalman_filter.cpp
     src/main.cpp
     src/tools.cpp
+    src/EkfFileHandler.cpp
     src/plot/PlotData.cpp)
 
 add_executable(ExtendedKF ${sources})

@@ -12,7 +12,6 @@ using std::vector;
 FusionEKF::FusionEKF()
 {
   is_initialized_ = false;
-
   previous_timestamp_ = 0;
 
   // initializing matrices
@@ -22,17 +21,16 @@ FusionEKF::FusionEKF()
 
   //measurement noise matrix - laser
   R_laser_ << 0.0225, 0,
-		  	  0,      0.0225;
+		  	      0,      0.0225;
 
   //measurement noise matrix - radar
   R_radar_ << 	0.09, 0,      0,
-				0,    0.0009, 0,
-				0,    0,      0.09;
+				        0,    0.0009, 0,
+                0,    0,      0.09;
 
   //observation model mapping matrix
   H_laser_ << 1, 0, 0, 0,
-		  	  0, 1, 0, 0;
-
+		  	      0, 1, 0, 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
@@ -83,16 +81,16 @@ void FusionEKF::InitalizeKalmanFilter(const MeasurementPackage &first_measuremen
 	//the initial transition matrix F
 	MatrixXd F = MatrixXd(4, 4);
 	F <<  1, 0, 1, 0,
-		  0, 1, 0, 1,
-		  0, 0, 1, 0,
-		  0, 0, 0, 1;
+		    0, 1, 0, 1,
+		    0, 0, 1, 0,
+		    0, 0, 0, 1;
 
 	//state covariance matrix P
 	MatrixXd P = MatrixXd(4, 4);
-	P <<  1, 0, 0, 0,
-		  0, 1, 0, 0,
-		  0, 0, 1000, 0,
-		  0, 0, 0, 1000;
+	P <<  1, 0, 0,    0,
+		    0, 1, 0,    0,
+		    0, 0, 1000, 0,
+		    0, 0, 0, 1000;
 
 	//Initialize time
 	this->previous_timestamp_ = first_measurement.timestamp_;
