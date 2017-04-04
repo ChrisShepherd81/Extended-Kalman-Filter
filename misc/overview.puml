@@ -45,10 +45,23 @@ class Data{
  SensorType : enum
  values : VectorXd 
 }
+class EkfFileHandler{ 
+ +check_files() : bool
+ +read_file() : void
+ +write_to_file() : void
+}
+class PlotData{ 
+ +addPoint() : void
+ +getAllX() const : std::vector<double>
+ +getAllY() const : std::vector<double>
+ +getTitle() const : std::string 
+}
 Tools *-- FusionEKF
 Tools *-- KalmanFilter
 Data <|-- MeasurementPackage
 Data <|-- GroundTruthPackage
 KalmanFilter *-- FusionEKF
 MeasurementPackage .. FusionEKF
+MeasurementPackage .. EkfFileHandler
+GroundTruthPackage .. EkfFileHandler
 @enduml
