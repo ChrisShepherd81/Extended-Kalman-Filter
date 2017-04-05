@@ -4,7 +4,7 @@
 #include "FusionEKF.h"
 #include "EkfFileHandler.h"
 
-#define GNU_PLOT 1
+#define GNU_PLOT 0
 
 #if GNU_PLOT
 #include "plot/gnuplot_i.hpp"
