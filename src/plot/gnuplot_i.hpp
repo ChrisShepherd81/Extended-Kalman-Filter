@@ -30,7 +30,6 @@
 #ifndef _GNUPLOT_PIPES_H_
 #define _GNUPLOT_PIPES_H_
 
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -42,11 +41,18 @@
 #include <list>                 // for std::list
 #include <time.h>
 
+#if defined(__CYGWIN__)
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <sys/stat.h>
+#endif
+
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) 
 //defined for 32 and 64-bit environments
  #include <io.h>                // for _access(), _mktemp()
  #define GP_MAX_TMP_FILES  200   // 27 temporary files it's Microsoft restriction
-#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__) 
+#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__) || defined(__CYGWIN__)
 //all UNIX-like OSs (Linux, *BSD, MacOSX, Solaris, ...)
  #include <unistd.h>            // for access(), mkstemp()
  #define GP_MAX_TMP_FILES  64
@@ -597,8 +603,8 @@ std::string Gnuplot::m_sGNUPlotFileName = "gnuplot";
 std::string Gnuplot::m_sGNUPlotPath = "/usr/local/bin/";
 #endif
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
-std::string Gnuplot::terminal_std = "windows";
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__CYGWIN__)
+std::string Gnuplot::terminal_std = "wxt";
 #elif ( defined(unix) || defined(__unix) || defined(__unix__) ) && !defined(__APPLE__)
 std::string Gnuplot::terminal_std = "x11";
 #elif defined(__APPLE__)
@@ -948,7 +954,7 @@ Gnuplot::~Gnuplot()
     // A stream opened by popen() should be closed by pclose()
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
     if (_pclose(gnucmd) == -1)
-#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
+#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__) || defined(__CYGWIN__)
     if (pclose(gnucmd) == -1)
 #endif
         throw GnuplotException("Problem closing communication to gnuplot");
@@ -1597,9 +1603,9 @@ Gnuplot& Gnuplot::plot_image(const unsigned char * ucPicBuf,
     // write the data to file
     //
     int iIndex = 0;
-    for(int iRow = 0; iRow < iHeight; iRow++)
+    for(size_t iRow = 0; iRow < iHeight; iRow++)
     {
-        for(int iColumn = 0; iColumn < iWidth; iColumn++)
+        for(size_t iColumn = 0; iColumn < iWidth; iColumn++)
         {
             tmp << iColumn << " " << iRow  << " " 
                 << static_cast<float>(ucPicBuf[iIndex++]) << std::endl;
@@ -1691,7 +1697,7 @@ void Gnuplot::init()
     // Retrieves a C string containing the value of the environment variable 
     // whose name is specified as argument.  If the requested variable is not 
     // part of the environment list, the function returns a NULL pointer.
-#if ( defined(unix) || defined(__unix) || defined(__unix__) ) && !defined(__APPLE__)
+#if ( defined(unix) || defined(__unix) || defined(__unix__) ) && !defined(__APPLE__) && !defined(__CYGWIN__)
     if (getenv("DISPLAY") == NULL)
     {
         valid = false;
@@ -1883,18 +1889,24 @@ bool Gnuplot::file_available(const std::string &filename){
 //
 // Opens a temporary file
 //
-static int Counter = 0;
 std::string Gnuplot::create_tmpfile(std::ofstream &tmp)
 {
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)
+	static int Counter = 0;
 	Counter++;
     char name[32] = "t_"; //tmp file in working directory
 	char t[10];
 	//srand(time(NULL));
-	itoa(Counter, t, 10 );
+	//itoa(Counter, t, 10 );
+	snprintf(t, 10, "%d", Counter);
 	strcat(name, t);
 	strcat(name, "XXXXXX");
+#elif defined(__CYGWIN__)
+	//Workaround for temp file creation
+	char folder[] = "tmp";
+	mkdir(folder, 0777);
+	char name[] = "./tmp/gnuplotiXXXXXX";
 #elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
     char name[] = "/tmp/gnuplotiXXXXXX"; // tmp file in /tmp
 #endif
@@ -1964,5 +1976,9 @@ void Gnuplot::remove_tmpfiles(){
 
         Gnuplot::tmpfile_num -= tmpfile_list.size();
     }
+
+#if defined(__CYGWIN__)
+    rmdir("tmp");
+#endif
 }
 #endif

@@ -4,7 +4,7 @@
 #include "FusionEKF.h"
 #include "EkfFileHandler.h"
 
-#define GNU_PLOT 0
+#define GNU_PLOT 1
 
 #if GNU_PLOT
 #include "plot/gnuplot_i.hpp"
@@ -121,6 +121,10 @@ int main(int argc, char* argv[])
   gp.set_style("points pt 1 ps 1 lc rgb 'black'");
   gp.plot_xy(plot_estimations.getAllX(), plot_estimations.getAllY(), plot_estimations.getTitle());
 
+  std::cout << "Press 'Enter' to exit program.\n";
+  std::cin.get();
+
+  gp.remove_tmpfiles();
 #endif
   return 0;
 }
