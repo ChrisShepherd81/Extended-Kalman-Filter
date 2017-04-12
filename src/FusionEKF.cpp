@@ -41,6 +41,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement)
   if (!is_initialized_)
   {
 	  this->InitalizeKalmanFilter(measurement);
+	  return;
   }
 
   /*****************************************************************************

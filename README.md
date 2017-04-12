@@ -20,7 +20,7 @@ Self-Driving Car Engineer Nanodegree Program Project 1 - Term 2
    some sample inputs in 'data/'.
     - eg. `./ExtendedKF ../data/sample-laser-radar-measurement-data-1.txt output.txt`
 5. For plotting the result diagram set GNU_PLOT to 1 in main.cpp:
-    - #define GNU_PLOT 0
+    - #define GNU_PLOT 1
 
 ## Overview
 ![class diagram](./misc/OverView.png "Class diagram")
